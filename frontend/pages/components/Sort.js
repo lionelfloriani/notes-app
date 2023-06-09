@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styles from './Sort.module.css'
 import ButtonMenu from './ButtonMenu'
 
-function Sort() {
+function Sort({ handleNewNoteClick }) {
   const options = ['date', 'work', 'perso', 'others']
   const [selectedOption, setSelectedOption] = useState('date')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -16,6 +16,11 @@ function Sort() {
     setIsMenuOpen(false)
   }
 
+  const handleNewNote = () => {
+    const createdAt = new Date().toISOString()
+    handleNewNoteClick(createdAt)
+  }
+
   return (
     <div className={styles.container}>
       <ButtonMenu
@@ -25,7 +30,9 @@ function Sort() {
         isMenuOpen={isMenuOpen}
         onToggleMenu={toggleMenu}
       />
-      <button className="border">New Note</button>
+      <button className="border" onClick={handleNewNote}>
+        New Note
+      </button>
     </div>
   )
 }

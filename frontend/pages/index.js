@@ -4,10 +4,12 @@ import ScrollableDiv from './components/ScrollableDiv'
 import Sort from './components/Sort'
 import 'tailwindcss/tailwind.css'
 import FullNote from './components/FullNote'
+import { formateDate } from '../../utils'
 
 export default function App() {
   const [data, setData] = useState([])
   const [selectedNote, setSelectedNote] = useState(data[0] || null)
+  const [createdAt, setCreatedAt] = useState('')
 
   const fetchData = () => {
     fetch('http://localhost:5000/api/v1/notes')
@@ -34,6 +36,12 @@ export default function App() {
     } catch (error) {
       console.error('Error retrieving selected note:', error)
     }
+  }
+
+  const handleNewNoteClick = () => {
+    const timestamp = formateDate(new Date())
+    setSelectedNote({})
+    setCreatedAt(timestamp)
   }
 
   useEffect(() => {
@@ -75,9 +83,9 @@ export default function App() {
         <div className="w-1/4 h-screen border-r-2 border-gray-300 bg-slate-50 flex flex-col">
           <MainTitle title="NOTES"></MainTitle>
           <ScrollableDiv data={data} handleNoteClick={handleNoteClick} handleDeleteNote={handleDeleteNote} />
-          <Sort></Sort>
+          <Sort handleNewNoteClick={handleNewNoteClick}></Sort>
         </div>
-        <div className="w-3/4 h-screen">{selectedNote && <FullNote data={selectedNote} />}</div>
+        <div className="w-3/4 h-screen">{selectedNote && <FullNote data={selectedNote} createdAt={createdAt} />}</div>
       </div>
     </div>
   )
