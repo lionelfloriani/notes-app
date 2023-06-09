@@ -4,7 +4,7 @@ import ScrollableDiv from './components/ScrollableDiv'
 import Sort from './components/Sort'
 import 'tailwindcss/tailwind.css'
 import FullNote from './components/FullNote'
-import { formateDate } from '../../utils'
+import { formateDate } from './utils/date.formatter'
 
 export default function App() {
   const [data, setData] = useState([])
@@ -38,9 +38,9 @@ export default function App() {
     }
   }
 
-  const handleNewNoteClick = () => {
+  const handleNewNoteClick = (newNote) => {
     const timestamp = formateDate(new Date())
-    setSelectedNote({})
+    setSelectedNote(newNote)
     setCreatedAt(timestamp)
   }
 
@@ -77,6 +77,10 @@ export default function App() {
       })
   }
 
+  const handleUpdateNote = (id, updatedNote) => {
+    setData((prevNotes) => prevNotes.map((note) => (note.id === id ? updatedNote : note)))
+  }
+
   return (
     <div className="fixed top-0 left-0 w-screen h-scree">
       <div className="flex">
@@ -85,7 +89,9 @@ export default function App() {
           <ScrollableDiv data={data} handleNoteClick={handleNoteClick} handleDeleteNote={handleDeleteNote} />
           <Sort handleNewNoteClick={handleNewNoteClick}></Sort>
         </div>
-        <div className="w-3/4 h-screen">{selectedNote && <FullNote data={selectedNote} createdAt={createdAt} />}</div>
+        <div className="w-3/4 h-screen">
+          {selectedNote && <FullNote data={selectedNote} createdAt={createdAt} onUpdatedNote={handleUpdateNote} />}
+        </div>
       </div>
     </div>
   )

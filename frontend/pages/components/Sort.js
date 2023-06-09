@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styles from './Sort.module.css'
 import ButtonMenu from './ButtonMenu'
+import { formateDate } from '../utils/date.formatter'
 
 function Sort({ handleNewNoteClick }) {
   const options = ['date', 'work', 'perso', 'others']
@@ -17,8 +18,14 @@ function Sort({ handleNewNoteClick }) {
   }
 
   const handleNewNote = () => {
-    const createdAt = new Date().toISOString()
-    handleNewNoteClick(createdAt)
+    const createdAt = formateDate(new Date())
+    const newNote = {
+      title: 'Title',
+      content: 'Content...',
+      label: 'others',
+      createdAt: createdAt,
+    }
+    handleNewNoteClick(newNote)
   }
 
   return (
