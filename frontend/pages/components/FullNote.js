@@ -4,7 +4,6 @@ import { useState } from 'react'
 function FullNote({ data, createdAt, onUpdatedNote }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedNote, setEditedNote] = useState(data)
-  const [forceUpdate, setForceUpdate] = useState(false)
 
   const handleSaveNote = () => {
     setIsEditing(false)
@@ -21,7 +20,6 @@ function FullNote({ data, createdAt, onUpdatedNote }) {
           // Note updated successfully, update the state in the parent component
           onUpdatedNote(data._id, editedNote)
           console.log('Note updated successfully')
-          setForceUpdate(!forceUpdate)
         } else {
           console.error('Error updating note:', response.statusText)
           // Handle the error case if needed

@@ -78,7 +78,7 @@ export default function App() {
   }
 
   const handleUpdateNote = (id, updatedNote) => {
-    setData((prevNotes) => prevNotes.map((note) => (note.id === id ? updatedNote : note)))
+    setData((prevNotes) => prevNotes.map((note) => (note._id === id ? updatedNote : note)))
   }
 
   return (
