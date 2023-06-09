@@ -1,37 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 
-function FullNote({ data, createdAt, onUpdatedNote }) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedNote, setEditedNote] = useState({})
-
-  useEffect(() => {
-    setEditedNote({ ...data })
-  }, [data])
-
+function FullNote({ data, createdAt, isEditing, editedNote, onEdit, onSave }) {
   const handleSaveNote = () => {
-    setIsEditing(false)
-    // Make an API call to update the note
-    fetch(`http://localhost:5000/api/v1/notes/${data._id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(editedNote),
-    })
-      .then((response) => {
-        if (response.ok) {
-          // Note updated successfully, update the state in the parent component
-          onUpdatedNote(data._id, editedNote)
-          console.log('Note updated successfully')
-        } else {
-          console.error('Error updating note:', response.statusText)
-          // Handle the error case if needed
-        }
-      })
-      .catch((error) => {
-        console.error('Error updating note:', error)
-        // Handle the error case if needed
-      })
+    onSave(editedNote)
   }
 
   return (
@@ -40,17 +11,17 @@ function FullNote({ data, createdAt, onUpdatedNote }) {
         <input
           type="text"
           value={editedNote.title}
-          onChange={(e) => setEditedNote({ ...editedNote, title: e.target.value })}
+          onChange={(e) => onEdit({ ...editedNote, title: e.target.value })}
           className="text-2xl font-bold mb-4"
         />
       ) : (
         <h1 className="text-2xl font-bold mb-4">{data.title}</h1>
       )}
-      <p className="text-gray-500 text-xs mb-2">{data.createdAt}</p>
+      <p className="text-gray-500 text-xs mb-2">{createdAt}</p>
       {isEditing ? (
         <textarea
           value={editedNote.content}
-          onChange={(e) => setEditedNote({ ...editedNote, content: e.target.value })}
+          onChange={(e) => onEdit({ ...editedNote, content: e.target.value })}
           className="flex-1 bg-transparent outline-none"
         />
       ) : (
@@ -62,7 +33,7 @@ function FullNote({ data, createdAt, onUpdatedNote }) {
             Save
           </button>
         ) : (
-          <button onClick={() => setIsEditing(true)}>Edit</button>
+          <button onClick={() => onEdit(data)}>Edit</button>
         )}
       </div>
     </div>
