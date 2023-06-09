@@ -1,9 +1,12 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 function FullNote({ data, createdAt, onUpdatedNote }) {
   const [isEditing, setIsEditing] = useState(false)
-  const [editedNote, setEditedNote] = useState(data)
+  const [editedNote, setEditedNote] = useState({})
+
+  useEffect(() => {
+    setEditedNote({ ...data })
+  }, [data])
 
   const handleSaveNote = () => {
     setIsEditing(false)
