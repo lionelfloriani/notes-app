@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 
-function FullNote({ data, createdAt, onUpdatedNote }) {
+function FullNote({ data, onUpdatedNote, onSaveSuccess }) {
   const [isEditing, setIsEditing] = useState(false)
-  const [editedNote, setEditedNote] = useState({})
+  const [editedNote, setEditedNote] = useState({ ...data })
 
   useEffect(() => {
     setEditedNote({ ...data })
@@ -23,6 +23,7 @@ function FullNote({ data, createdAt, onUpdatedNote }) {
           // Note updated successfully, update the state in the parent component
           onUpdatedNote(data._id, editedNote)
           console.log('Note updated successfully')
+          onSaveSuccess()
         } else {
           console.error('Error updating note:', response.statusText)
           // Handle the error case if needed
@@ -46,7 +47,9 @@ function FullNote({ data, createdAt, onUpdatedNote }) {
       ) : (
         <h1 className="text-2xl font-bold mb-4">{data.title}</h1>
       )}
-      <p className="text-gray-500 text-xs mb-2">{data.createdAt}</p>
+      <p className="text-gray-500 text-xs mb-2">
+        {data.createdAt} - {data.label}
+      </p>
       {isEditing ? (
         <textarea
           value={editedNote.content}
