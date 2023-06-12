@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import MainTitle from './components/MainTitle'
 import ScrollableDiv from './components/ScrollableDiv'
 import Sort from './components/Sort'
@@ -6,10 +6,13 @@ import 'tailwindcss/tailwind.css'
 import FullNote from './components/FullNote'
 import { formateDate } from './utils/date.formatter'
 
+export const AppContext = React.createContext()
+
 export default function App() {
   const [data, setData] = useState([])
   const [selectedNote, setSelectedNote] = useState(data[0] || null)
   const [createdAt, setCreatedAt] = useState('')
+  const [refreshData, setRefreshData] = useState(false)
 
   const fetchData = () => {
     fetch('http://localhost:5000/api/v1/notes')
@@ -18,12 +21,13 @@ export default function App() {
       })
       .then((data) => {
         setData(data.reverse())
+        setRefreshData(false)
       })
   }
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [refreshData])
 
   const handleNoteClick = async (noteId) => {
     try {
@@ -78,21 +82,34 @@ export default function App() {
   }
 
   const handleUpdateNote = (id, updatedNote) => {
-    setData((prevNotes) => prevNotes.map((note) => (note._id === id ? updatedNote : note)))
+    setData((prevData) => prevData.map((note) => (note._id === id ? { ...note, ...updatedNote } : note)))
+  }
+
+  const handleSaveSuccess = () => {
+    fetchData() // Fetch the updated data from the API
   }
 
   return (
     <div className="fixed top-0 left-0 w-screen h-scree">
-      <div className="flex">
-        <div className="w-1/4 h-screen border-r-2 border-gray-300 bg-slate-50 flex flex-col">
-          <MainTitle title="NOTES"></MainTitle>
-          <ScrollableDiv data={data} handleNoteClick={handleNoteClick} handleDeleteNote={handleDeleteNote} />
-          <Sort handleNewNoteClick={handleNewNoteClick}></Sort>
+      <AppContext.Provider value={{ data, setData }}>
+        <div className="flex">
+          <div className="w-1/4 h-screen border-r-2 border-gray-300 bg-slate-50 flex flex-col">
+            <MainTitle title="NOTES"></MainTitle>
+            <ScrollableDiv data={data} handleNoteClick={handleNoteClick} handleDeleteNote={handleDeleteNote} />
+            <Sort handleNewNoteClick={handleNewNoteClick} />
+          </div>
+          <div className="w-3/4 h-screen">
+            {selectedNote && (
+              <FullNote
+                data={selectedNote}
+                createdAt={createdAt}
+                onUpdatedNote={handleUpdateNote}
+                onSaveSuccess={handleSaveSuccess}
+              />
+            )}
+          </div>
         </div>
-        <div className="w-3/4 h-screen">
-          {selectedNote && <FullNote data={selectedNote} createdAt={createdAt} onUpdatedNote={handleUpdateNote} />}
-        </div>
-      </div>
+      </AppContext.Provider>
     </div>
   )
 }
