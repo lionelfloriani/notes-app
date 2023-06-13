@@ -1,0 +1,6 @@
+/* FullNote.module.css */
+
+.editMode input,
+.editMode textarea {
+  background-color: #f2f2f2; /* Adjust the desired color here */
+}
