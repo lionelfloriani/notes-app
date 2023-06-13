@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
+import styles from './FullNote.module.css'
 
 function FullNote({ data, onUpdatedNote, onSaveSuccess }) {
   const [isEditing, setIsEditing] = useState(false)
@@ -66,7 +67,7 @@ function FullNote({ data, onUpdatedNote, onSaveSuccess }) {
   }
 
   return (
-    <div className="flex flex-col p-4 bg-white">
+    <div className={`flex flex-col p-4 bg-white ${isEditing ? styles.editMode : ''}`}>
       {isEditing ? (
         <input
           type="text"

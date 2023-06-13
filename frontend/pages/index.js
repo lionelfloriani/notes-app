@@ -20,9 +20,25 @@ export default function App() {
         return response.json()
       })
       .then((data) => {
-        setData(data.reverse())
+        const sortedData = data.sort((a, b) => compareCreatedAt(a.createdAt, b.createdAt))
+        setData(sortedData)
         setRefreshData(false)
       })
+  }
+
+  const parseCreatedAt = (createdAt) => {
+    const [time, date] = createdAt.split(' - ')
+    const [hours, minutes] = time.split(':')
+    const [day, month, year] = date.split('/')
+    // Assuming the year is represented with two digits, converting it to four digits by assuming the current century
+    const fullYear = new Date().getFullYear().toString().substr(0, 2) + year
+    return new Date(fullYear, month - 1, day, hours, minutes)
+  }
+
+  const compareCreatedAt = (createdAtA, createdAtB) => {
+    const dateA = parseCreatedAt(createdAtA)
+    const dateB = parseCreatedAt(createdAtB)
+    return dateB.getTime() - dateA.getTime() // Sort in descending order
   }
 
   useEffect(() => {
