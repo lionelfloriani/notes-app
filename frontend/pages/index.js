@@ -13,16 +13,26 @@ export default function App() {
   const [selectedNote, setSelectedNote] = useState(data[0] || null)
   const [createdAt, setCreatedAt] = useState('')
   const [refreshData, setRefreshData] = useState(false)
+  const [filterOption, setFilterOption] = useState('date')
 
   const fetchData = () => {
-    fetch('http://localhost:5000/api/v1/notes')
-      .then((response) => {
-        return response.json()
-      })
+    let apiUrl = 'http://localhost:5000/api/v1/notes'
+
+    if (filterOption !== 'date') {
+      apiUrl += `/${filterOption}`
+    }
+
+    fetch(apiUrl)
+      .then((response) => response.json())
       .then((data) => {
         const sortedData = data.sort((a, b) => compareCreatedAt(a.createdAt, b.createdAt))
         setData(sortedData)
         setRefreshData(false)
+        console.log(filterOption)
+        console.log('Filtered Data:', sortedData) // Add this line to log the filtered data
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error)
       })
   }
 
@@ -43,7 +53,7 @@ export default function App() {
 
   useEffect(() => {
     fetchData()
-  }, [refreshData])
+  }, [refreshData, filterOption])
 
   const handleNoteClick = async (noteId) => {
     try {
@@ -67,6 +77,8 @@ export default function App() {
   useEffect(() => {
     if (data.length > 0) {
       setSelectedNote(data[0])
+    } else {
+      setSelectedNote(null)
     }
   }, [data])
 
@@ -110,7 +122,21 @@ export default function App() {
       <AppContext.Provider value={{ data, setData }}>
         <div className="flex">
           <div className="w-1/4 h-screen border-r-2 border-gray-300 bg-slate-50 flex flex-col">
-            <MainTitle title="NOTES"></MainTitle>
+            <div className="flex flex-col items-center justify-center">
+              <MainTitle title="NOTES"></MainTitle>
+              <div className="flex items-center">
+                <span className="mr-2 text-gray-500">Filter:</span>
+                <select
+                  className="px-2 py-1 border border-gray-300 rounded"
+                  value={filterOption}
+                  onChange={(e) => setFilterOption(e.target.value)}>
+                  <option value="date">Date</option>
+                  <option value="work">Work</option>
+                  <option value="personal">Personal</option>
+                  <option value="others">Others</option>
+                </select>
+              </div>
+            </div>
             <ScrollableDiv data={data} handleNoteClick={handleNoteClick} handleDeleteNote={handleDeleteNote} />
             <Sort handleNewNoteClick={handleNewNoteClick} />
           </div>

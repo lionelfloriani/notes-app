@@ -3,8 +3,8 @@ import styles from './Sort.module.css'
 import ButtonMenu from './ButtonMenu'
 import { formateDate } from '../utils/date.formatter'
 
-function Sort({ handleNewNoteClick }) {
-  const options = ['date', 'work', 'perso', 'others']
+function Sort({ handleNewNoteClick, handleSortOptionSelect }) {
+  const options = ['date', 'work', 'personal', 'others']
   const [selectedOption, setSelectedOption] = useState('date')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -15,6 +15,7 @@ function Sort({ handleNewNoteClick }) {
   const handleOptionSelect = (option) => {
     setSelectedOption(option)
     setIsMenuOpen(false)
+    handleSortOptionSelect(option) // Update the sort option in the App component
   }
 
   const handleNewNote = () => {
@@ -31,13 +32,13 @@ function Sort({ handleNewNoteClick }) {
 
   return (
     <div className={styles.container}>
-      <ButtonMenu
+      {/* <ButtonMenu
         selectedOption={selectedOption}
         options={options}
         onSelect={handleOptionSelect}
         isMenuOpen={isMenuOpen}
         onToggleMenu={toggleMenu}
-      />
+      /> */}
       <button className="border" onClick={handleNewNote}>
         New Note
       </button>
