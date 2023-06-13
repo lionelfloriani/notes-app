@@ -19,7 +19,7 @@ export default function App() {
     let apiUrl = 'http://localhost:5000/api/v1/notes'
 
     if (filterOption !== 'date') {
-      apiUrl += `/${filterOption}`
+      apiUrl += `/label/${filterOption}`
     }
 
     fetch(apiUrl)

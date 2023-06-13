@@ -12,14 +12,7 @@ async function getAllNotes(req, rep) {
 
 async function getNoteByLabel(req, rep) {
   try {
-    const { label } = req.params
-
-    // Check if the label is valid
-    if (!['work', 'personal', 'others'].includes(label)) {
-      return rep.status(400).send('Invalid label')
-    }
-
-    const notes = await Note.find({ label: { $eq: label } })
+    const notes = await Note.find({ label: req.params.param })
     rep.send(notes)
   } catch (error) {
     rep.status(500).send(error)
