@@ -20,6 +20,7 @@ function Sort({ handleNewNoteClick }) {
   const handleNewNote = () => {
     const createdAt = formateDate(new Date())
     const newNote = {
+      _id: null,
       title: 'Title',
       content: 'Content...',
       label: 'others',

@@ -10,29 +10,59 @@ function FullNote({ data, onUpdatedNote, onSaveSuccess }) {
 
   const handleSaveNote = () => {
     setIsEditing(false)
-    // Make an API call to update the note
-    fetch(`http://localhost:5000/api/v1/notes/${data._id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(editedNote),
-    })
-      .then((response) => {
-        if (response.ok) {
-          // Note updated successfully, update the state in the parent component
-          onUpdatedNote(data._id, editedNote)
-          console.log('Note updated successfully')
-          onSaveSuccess()
-        } else {
-          console.error('Error updating note:', response.statusText)
+
+    if (data._id) {
+      // Update existing note
+      fetch(`http://localhost:5000/api/v1/notes/${data._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editedNote),
+      })
+        .then((response) => {
+          if (response.ok) {
+            // Note updated successfully, update the state in the parent component
+            onUpdatedNote(data._id, editedNote)
+            console.log('Note updated successfully')
+            onSaveSuccess()
+          } else {
+            console.error('Error updating note:', response.statusText)
+            // Handle the error case if needed
+          }
+        })
+        .catch((error) => {
+          console.error('Error updating note:', error)
           // Handle the error case if needed
-        }
+        })
+    } else {
+      // Create new note
+      fetch('http://localhost:5000/api/v1/notes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editedNote),
       })
-      .catch((error) => {
-        console.error('Error updating note:', error)
-        // Handle the error case if needed
-      })
+        .then((response) => {
+          if (response.ok) {
+            // Note created successfully, handle the response
+            return response.json()
+          } else {
+            console.error('Error creating note:', response.statusText)
+            // Handle the error case if needed
+          }
+        })
+        .then((createdNote) => {
+          // Handle the created note data
+          console.log('Note created successfully:', createdNote)
+          onSaveSuccess()
+        })
+        .catch((error) => {
+          console.error('Error creating note:', error)
+          // Handle the error case if needed
+        })
+    }
   }
 
   return (
