@@ -12,7 +12,8 @@ dist
 dist-ssr
 *.local
 *.env*
-frontend/.next/static/webpack/
+frontend/.next/
+frontend/out/
 
 
 # Editor directories and files
